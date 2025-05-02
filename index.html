@@ -3,30 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Интерактивное резюме</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <title>Простое резюме</title>
   <style>
     :root {
-      --primary-color: #2c3e50;
-      --secondary-color: #3498db;
-      --accent-color: #e74c3c;
-      --text-color: #34495e;
-      --bg-color: #f5f7fa;
-      --card-bg: #ffffff;
-      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      --border-radius: 8px;
-      --transition: all 0.3s ease;
+      --text-color: #333;
+      --bg-color: #fff;
+      --border-color: #ddd;
+      --primary-color: #555;
+      --secondary-color: #777;
     }
 
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Arial, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
     .a4-container {
@@ -35,34 +29,23 @@
       margin: 0 auto;
       padding: 20mm;
       box-sizing: border-box;
-      background-color: var(--card-bg);
-      box-shadow: var(--shadow);
+      background-color: var(--bg-color);
     }
 
     .profile-header {
       display: flex;
       align-items: center;
       margin-bottom: 20px;
-      gap: 20px;
       padding-bottom: 20px;
-      border-bottom: 1px solid rgba(44, 62, 80, 0.1);
+      border-bottom: 1px solid var(--border-color);
     }
 
     .profile-photo {
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       overflow: hidden;
-      border: 3px solid var(--secondary-color);
-      position: relative;
-      cursor: pointer;
-      transition: var(--transition);
-      box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
-    }
-
-    .profile-photo:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 12px rgba(52, 152, 219, 0.3);
+      margin-right: 20px;
     }
 
     .profile-photo img {
@@ -71,356 +54,95 @@
       object-fit: cover;
     }
 
-    .upload-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(44, 62, 80, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      opacity: 0;
-      transition: var(--transition);
-      font-size: 0.9em;
-    }
-
-    .profile-photo:hover .upload-overlay {
-      opacity: 1;
-    }
-
-    #photoInput {
-      display: none;
-    }
-
     .profile-info h1 {
-      font-size: 2em;
+      font-size: 1.8em;
       margin: 0;
-      color: var(--primary-color);
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      color: var(--text-color);
     }
 
     .profile-info p {
-      font-size: 1.2em;
+      font-size: 1.1em;
       margin: 5px 0 0;
       color: var(--secondary-color);
-      font-weight: 500;
     }
 
-    .profile-grid {
-      display: grid;
-      grid-template-rows: auto auto auto;
-      gap: 20px;
+    .section {
+      margin-bottom: 20px;
     }
 
-    .profile-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .profile-card {
-      background-color: var(--card-bg);
-      border-radius: var(--border-radius);
-      padding: 15px;
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow: hidden;
-      transition: var(--transition);
-      border-top: 3px solid var(--secondary-color);
-    }
-
-    .profile-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .profile-card h2 {
-      color: var(--primary-color);
-      margin: 0 0 15px 0;
+    .section h2 {
       font-size: 1.3em;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid rgba(44, 62, 80, 0.1);
-      padding-bottom: 8px;
+      color: var(--primary-color);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 5px;
+      margin-bottom: 15px;
     }
 
-    /* Опыт работы */
-    .experience-vertical {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
+    .item {
+      margin-bottom: 15px;
     }
 
-    .exp-item {
-      background-color: rgba(52, 152, 219, 0.05);
-      border-radius: var(--border-radius);
-      padding: 12px;
-      border-left: 3px solid var(--secondary-color);
-      position: relative;
-      overflow: hidden;
-      transition: var(--transition);
-    }
-
-    .exp-item:hover {
-      background-color: rgba(52, 152, 219, 0.1);
-    }
-
-    .exp-header {
+    .item-header {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
       margin-bottom: 5px;
     }
 
-    .exp-header h3 {
+    .item-header h3 {
       margin: 0;
       font-size: 1.1em;
-      color: var(--primary-color);
-      font-weight: 600;
     }
 
-    .exp-date {
-      font-size: 0.85em;
-      opacity: 0.8;
-      background-color: rgba(52, 152, 219, 0.1);
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-weight: 500;
+    .date {
       color: var(--secondary-color);
-    }
-
-    .exp-company {
-      font-weight: 600;
-      margin-bottom: 8px;
-      font-size: 0.95em;
-      color: var(--text-color);
-    }
-
-    .exp-desc {
       font-size: 0.9em;
-      line-height: 1.6;
-      opacity: 0.9;
     }
 
-    /* Образование */
-    .education-vertical {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .edu-item {
-      background-color: rgba(52, 152, 219, 0.05);
-      border-radius: var(--border-radius);
-      padding: 12px;
-      border-left: 3px solid var(--secondary-color);
-      position: relative;
-      overflow: hidden;
-      transition: var(--transition);
-    }
-
-    .edu-item:hover {
-      background-color: rgba(52, 152, 219, 0.1);
-    }
-
-    .edu-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
+    .company {
+      font-weight: bold;
       margin-bottom: 5px;
     }
 
-    .edu-header h3 {
-      margin: 0;
-      font-size: 1.1em;
-      color: var(--primary-color);
-      font-weight: 600;
-    }
-
-    .edu-date {
-      font-size: 0.85em;
-      opacity: 0.8;
-      background-color: rgba(52, 152, 219, 0.1);
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-weight: 500;
-      color: var(--secondary-color);
-    }
-
-    .edu-place {
-      font-weight: 600;
-      margin-bottom: 8px;
-      font-size: 0.95em;
-      color: var(--text-color);
-    }
-
-    .edu-desc {
-      font-size: 0.9em;
-      line-height: 1.6;
-      opacity: 0.9;
-    }
-
-    /* Навыки и языки */
-    .tags-container {
+    .tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 5px;
     }
 
     .tag {
-      background-color: var(--secondary-color);
-      color: white;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 0.85em;
-      position: relative;
-      overflow: hidden;
-      transition: var(--transition);
-      font-weight: 500;
+      background-color: #f0f0f0;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 0.9em;
     }
 
-    .tag:hover {
-      background-color: var(--primary-color);
-      transform: translateY(-2px);
+    .contact {
+      margin-bottom: 5px;
     }
 
-    .languages-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .language-item {
-      font-size: 0.95em;
-      position: relative;
-      overflow: hidden;
-      padding: 8px;
-      background-color: rgba(52, 152, 219, 0.05);
-      border-radius: var(--border-radius);
-      transition: var(--transition);
-    }
-
-    .language-item:hover {
-      background-color: rgba(52, 152, 219, 0.1);
-    }
-
-    .flag {
-      margin-right: 8px;
-      font-size: 1.2em;
-    }
-
-    .level {
-      color: var(--secondary-color);
-      font-size: 0.85em;
-      margin-left: 5px;
-      font-weight: 500;
-    }
-
-    /* Контакты */
-    .contacts-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .contact-item {
-      font-size: 0.95em;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      position: relative;
-      overflow: hidden;
-      padding: 8px;
-      background-color: rgba(52, 152, 219, 0.05);
-      border-radius: var(--border-radius);
-      transition: var(--transition);
-    }
-
-    .contact-item:hover {
-      background-color: rgba(52, 152, 219, 0.1);
-    }
-
-    /* Кнопки */
     .controls {
-      display: flex;
-      justify-content: center;
       margin-top: 30px;
+      text-align: center;
     }
 
-    #downloadBtn, .add-btn {
-      border-radius: 6px;
-      border: none;
-      padding: 10px 20px;
-      font-size: 1em;
-      background-color: var(--secondary-color);
-      color: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      position: relative;
-      overflow: hidden;
-      transition: var(--transition);
-      font-weight: 600;
-      box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
-    }
-
-    #downloadBtn:hover, .add-btn:hover {
+    #downloadBtn {
       background-color: var(--primary-color);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 10px rgba(52, 152, 219, 0.3);
-    }
-
-    .add-btn {
-      background-color: var(--accent-color);
-      margin-top: 15px;
-      box-shadow: 0 4px 6px rgba(231, 76, 60, 0.2);
-    }
-
-    .add-btn:hover {
-      background-color: #c0392b;
-      box-shadow: 0 6px 10px rgba(231, 76, 60, 0.3);
-    }
-
-    /* Эффект волны */
-    .wave {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.4);
-      border-radius: 50%;
-      transform: scale(0);
-      pointer-events: none;
-      animation: wave 0.6s ease-out;
-      opacity: 1;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 1em;
     }
 
     [contenteditable="true"] {
-      padding: 3px 6px;
-      border-radius: 4px;
+      padding: 2px;
+      border-radius: 2px;
       min-height: 1em;
-      transition: var(--transition);
     }
 
     [contenteditable="true"]:focus {
       outline: none;
-      background-color: rgba(52, 152, 219, 0.1);
-      box-shadow: inset 0 0 0 1px var(--secondary-color);
-    }
-
-    /* Анимации */
-    @keyframes wave {
-      0% {
-        transform: scale(0);
-        opacity: 1;
-      }
-      100% {
-        transform: scale(4);
-        opacity: 0;
-      }
+      background-color: #f5f5f5;
     }
 
     @media print {
@@ -428,12 +150,11 @@
         background: none;
       }
       .a4-container {
-        box-shadow: none;
         padding: 0;
         width: 100%;
         height: 100%;
       }
-      .controls, .add-btn, .upload-overlay {
+      .controls {
         display: none;
       }
     }
@@ -442,12 +163,8 @@
 <body>
   <div class="a4-container" id="resumeContent">
     <div class="profile-header">
-      <div class="profile-photo" id="photoUpload">
-        <img id="profileImage" src="https://via.placeholder.com/150" alt="Фото профиля">
-        <div class="upload-overlay">
-          <i class="fas fa-camera"></i> Загрузить фото
-        </div>
-        <input type="file" id="photoInput" accept="image/*">
+      <div class="profile-photo">
+        <img src="https://via.placeholder.com/150" alt="Фото профиля">
       </div>
       <div class="profile-info">
         <h1 contenteditable="true">Иван Иванов</h1>
@@ -455,360 +172,99 @@
       </div>
     </div>
 
-    <div class="profile-grid">
-      <!-- Первая строка: Языки и инструменты -->
-      <div class="profile-row">
-        <div class="profile-card">
-          <h2><i class="fas fa-language"></i> Языки</h2>
-          <div class="languages-container" id="languagesContainer">
-            <div class="language-item" contenteditable="true">
-              <span class="flag">🇷🇺</span> Русский <span class="level">(Родной)</span>
-            </div>
-            <div class="language-item" contenteditable="true">
-              <span class="flag">🇬🇧</span> Английский <span class="level">(B2 - Средне-продвинутый)</span>
-            </div>
+    <div class="sections">
+      <div class="section">
+        <h2>Опыт работы</h2>
+        <div class="item" contenteditable="true">
+          <div class="item-header">
+            <h3>Старший веб-разработчик</h3>
+            <div class="date">01.2020 - н.в.</div>
           </div>
-          <button class="add-btn" id="addLanguage"><i class="fas fa-plus"></i> Добавить язык</button>
+          <div class="company">ТехноКаб, Москва</div>
+          <div class="description">
+            - Разработка и поддержка веб-приложений<br>
+            - Руководство командой разработчиков<br>
+            - Оптимизация производительности
+          </div>
         </div>
 
-        <div class="profile-card">
-          <h2><i class="fas fa-code"></i> Инструменты</h2>
-          <div class="tags-container" id="skillsContainer">
-            <span class="tag" contenteditable="true">HTML/CSS</span>
-            <span class="tag" contenteditable="true">JavaScript</span>
-            <span class="tag" contenteditable="true">React</span>
-            <span class="tag" contenteditable="true">Node.js</span>
-            <span class="tag" contenteditable="true">Git</span>
-            <span class="tag" contenteditable="true">Webpack</span>
-            <span class="tag" contenteditable="true">SQL</span>
-            <span class="tag" contenteditable="true">REST API</span>
+        <div class="item" contenteditable="true">
+          <div class="item-header">
+            <h3>Веб-разработчик</h3>
+            <div class="date">06.2017 - 12.2019</div>
           </div>
-          <button class="add-btn" id="addSkill"><i class="fas fa-plus"></i> Добавить навык</button>
+          <div class="company">ДизайнСтудия, СПб</div>
+          <div class="description">
+            - Создание адаптивных веб-сайтов<br>
+            - Интеграция с CMS<br>
+            - Работа с клиентами
+          </div>
         </div>
       </div>
 
-      <!-- Вторая строка: Образование и увлечения -->
-      <div class="profile-row">
-        <div class="profile-card">
-          <h2><i class="fas fa-graduation-cap"></i> Образование</h2>
-          <div class="education-vertical" id="educationContainer">
-            <div class="edu-item" contenteditable="true">
-              <div class="edu-header">
-                <h3>Магистр компьютерных наук</h3>
-                <div class="edu-date">09.2014 - 06.2018</div>
-              </div>
-              <div class="edu-place">Московский технический университет</div>
-              <div class="edu-desc">Специализация: Веб-технологии. Диплом с отличием.</div>
-            </div>
+      <div class="section">
+        <h2>Образование</h2>
+        <div class="item" contenteditable="true">
+          <div class="item-header">
+            <h3>Магистр компьютерных наук</h3>
+            <div class="date">09.2014 - 06.2018</div>
           </div>
-          <button class="add-btn" id="addEducation"><i class="fas fa-plus"></i> Добавить образование</button>
-        </div>
-
-        <div class="profile-card">
-          <h2><i class="fas fa-heart"></i> Увлечения</h2>
-          <div class="tags-container" id="hobbiesContainer">
-            <span class="tag" contenteditable="true">Программирование</span>
-            <span class="tag" contenteditable="true">Открытый исходный код</span>
-            <span class="tag" contenteditable="true">Фотография</span>
-            <span class="tag" contenteditable="true">Путешествия</span>
+          <div class="company">Московский технический университет</div>
+          <div class="description">
+            Специализация: Веб-технологии. Диплом с отличием.
           </div>
-          <button class="add-btn" id="addHobby"><i class="fas fa-plus"></i> Добавить увлечение</button>
         </div>
       </div>
 
-      <!-- Третья строка: Опыт работы и контакты -->
-      <div class="profile-row">
-        <div class="profile-card">
-          <h2><i class="fas fa-briefcase"></i> Опыт работы</h2>
-          <div class="experience-vertical" id="experienceContainer">
-            <div class="exp-item" contenteditable="true">
-              <div class="exp-header">
-                <h3>Старший веб-разработчик</h3>
-                <div class="exp-date">01.2020 - н.в.</div>
-              </div>
-              <div class="exp-company">ТехноКаб, Москва</div>
-              <div class="exp-desc">
-                - Разработка и поддержка веб-приложений<br>
-                - Руководство командой разработчиков<br>
-                - Оптимизация производительности
-              </div>
-            </div>
-
-            <div class="exp-item" contenteditable="true">
-              <div class="exp-header">
-                <h3>Веб-разработчик</h3>
-                <div class="exp-date">06.2017 - 12.2019</div>
-              </div>
-              <div class="exp-company">ДизайнСтудия, СПб</div>
-              <div class="exp-desc">
-                - Создание адаптивных веб-сайтов<br>
-                - Интеграция с CMS<br>
-                - Работа с клиентами
-              </div>
-            </div>
-          </div>
-          <button class="add-btn" id="addExperience"><i class="fas fa-plus"></i> Добавить опыт работы</button>
+      <div class="section">
+        <h2>Навыки</h2>
+        <div class="tags" contenteditable="true">
+          <span class="tag">HTML/CSS</span>
+          <span class="tag">JavaScript</span>
+          <span class="tag">React</span>
+          <span class="tag">Node.js</span>
+          <span class="tag">Git</span>
         </div>
+      </div>
 
-        <div class="profile-card">
-          <h2><i class="fas fa-envelope"></i> Контакты</h2>
-          <div class="contacts-container" id="contactsContainer">
-            <div class="contact-item" contenteditable="true">
-              <i class="fas fa-phone"></i> +7 (123) 456-78-90
-            </div>
-            <div class="contact-item" contenteditable="true">
-              <i class="fas fa-envelope"></i> ivanov@example.com
-            </div>
-            <div class="contact-item" contenteditable="true">
-              <i class="fab fa-github"></i> github.com/ivanov
-            </div>
-            <div class="contact-item" contenteditable="true">
-              <i class="fab fa-linkedin"></i> linkedin.com/in/ivanov
-            </div>
-            <div class="contact-item" contenteditable="true">
-              <i class="fas fa-map-marker-alt"></i> Москва, Россия
-            </div>
-          </div>
-          <button class="add-btn" id="addContact"><i class="fas fa-plus"></i> Добавить контакт</button>
-        </div>
+      <div class="section">
+        <h2>Контакты</h2>
+        <div class="contact" contenteditable="true">+7 (123) 456-78-90</div>
+        <div class="contact" contenteditable="true">ivanov@example.com</div>
+        <div class="contact" contenteditable="true">github.com/ivanov</div>
+        <div class="contact" contenteditable="true">Москва, Россия</div>
       </div>
     </div>
 
     <div class="controls">
-      <button id="downloadBtn"><i class="fas fa-download"></i> Сохранить в PDF</button>
+      <button id="downloadBtn">Сохранить в PDF</button>
     </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Функция для создания эффекта волны
-      function createWaveEffect(event, element) {
-        const rect = element.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        
-        const wave = document.createElement('span');
-        wave.className = 'wave';
-        wave.style.left = `${x}px`;
-        wave.style.top = `${y}px`;
-        
-        element.appendChild(wave);
-        
-        setTimeout(() => {
-          wave.remove();
-        }, 600);
-      }
-
-      // Добавляем обработчики для всех кликабельных элементов
-      function setupWaveEffects() {
-        // Фото профиля
-        document.getElementById('photoUpload').addEventListener('click', function(e) {
-          createWaveEffect(e, this);
-        });
-
-        // Карточки
-        document.querySelectorAll('.profile-card').forEach(card => {
-          card.addEventListener('click', function(e) {
-            createWaveEffect(e, this);
-          });
-        });
-
-        // Элементы опыта и образования
-        document.querySelectorAll('.exp-item, .edu-item').forEach(item => {
-          item.addEventListener('click', function(e) {
-            createWaveEffect(e, this);
-          });
-        });
-
-        // Теги и языки
-        document.querySelectorAll('.tag, .language-item, .contact-item').forEach(item => {
-          item.addEventListener('click', function(e) {
-            createWaveEffect(e, this);
-          });
-        });
-
-        // Кнопки
-        document.querySelectorAll('button').forEach(button => {
-          button.addEventListener('click', function(e) {
-            createWaveEffect(e, this);
-          });
-        });
-      }
-
-      // Загрузка фото профиля
-      const photoUpload = document.getElementById('photoUpload');
-      const photoInput = document.getElementById('photoInput');
-      const profileImage = document.getElementById('profileImage');
-
-      photoUpload.addEventListener('click', function() {
-        photoInput.click();
-      });
-
-      photoInput.addEventListener('change', function(e) {
-        if (e.target.files && e.target.files[0]) {
-          const reader = new FileReader();
-
-          reader.onload = function(event) {
-            profileImage.src = event.target.result;
-            // Сохраняем фото в localStorage
-            localStorage.setItem('profilePhoto', event.target.result);
-          };
-
-          reader.readAsDataURL(e.target.files[0]);
-        }
-      });
-
-      // Загружаем сохраненное фото при загрузке страницы
-      if (localStorage.getItem('profilePhoto')) {
-        profileImage.src = localStorage.getItem('profilePhoto');
-      }
-
-      // Сохранение изменений в LocalStorage
-      const editableElements = document.querySelectorAll('[contenteditable="true"]');
-      
-      editableElements.forEach(element => {
-        // Генерация уникального ключа на основе позиции элемента
-        const key = 'resume-' + Array.from(element.parentNode.children).indexOf(element);
-        
-        // Загрузка сохраненных данных
-        if (localStorage.getItem(key)) {
-          element.innerHTML = localStorage.getItem(key);
-        }
-        
-        // Сохранение при изменении
-        element.addEventListener('input', function() {
-          localStorage.setItem(key, this.innerHTML);
-        });
-      });
-
-      // Функции для добавления новых элементов
-      function addLanguage() {
-        const container = document.getElementById('languagesContainer');
-        const newItem = document.createElement('div');
-        newItem.className = 'language-item';
-        newItem.setAttribute('contenteditable', 'true');
-        newItem.innerHTML = '<span class="flag">🇺🇸</span> Новый язык <span class="level">(Уровень)</span>';
-        container.appendChild(newItem);
-        newItem.focus();
-      }
-
-      function addSkill() {
-        const container = document.getElementById('skillsContainer');
-        const newItem = document.createElement('span');
-        newItem.className = 'tag';
-        newItem.setAttribute('contenteditable', 'true');
-        newItem.textContent = 'Новый навык';
-        container.appendChild(newItem);
-        newItem.focus();
-      }
-
-      function addHobby() {
-        const container = document.getElementById('hobbiesContainer');
-        const newItem = document.createElement('span');
-        newItem.className = 'tag';
-        newItem.setAttribute('contenteditable', 'true');
-        newItem.textContent = 'Новое увлечение';
-        container.appendChild(newItem);
-        newItem.focus();
-      }
-
-      function addContact() {
-        const container = document.getElementById('contactsContainer');
-        const newItem = document.createElement('div');
-        newItem.className = 'contact-item';
-        newItem.setAttribute('contenteditable', 'true');
-        newItem.innerHTML = '<i class="fas fa-globe"></i> Новый контакт';
-        container.appendChild(newItem);
-        newItem.focus();
-      }
-
-      function addEducation() {
-        const container = document.getElementById('educationContainer');
-        const newItem = document.createElement('div');
-        newItem.className = 'edu-item';
-        newItem.setAttribute('contenteditable', 'true');
-        newItem.innerHTML = `
-          <div class="edu-header">
-            <h3>Новая степень</h3>
-            <div class="edu-date">MM.YYYY - MM.YYYY</div>
-          </div>
-          <div class="edu-place">Название учебного заведения</div>
-          <div class="edu-desc">Описание образования</div>
-        `;
-        container.appendChild(newItem);
-        newItem.focus();
-      }
-
-      function addExperience() {
-        const container = document.getElementById('experienceContainer');
-        const newItem = document.createElement('div');
-        newItem.className = 'exp-item';
-        newItem.setAttribute('contenteditable', 'true');
-        newItem.innerHTML = `
-          <div class="exp-header">
-            <h3>Новая должность</h3>
-            <div class="exp-date">MM.YYYY - MM.YYYY</div>
-          </div>
-          <div class="exp-company">Название компании</div>
-          <div class="exp-desc">
-            - Описание обязанностей<br>
-            - Достижения и результаты
-          </div>
-        `;
-        container.appendChild(newItem);
-        newItem.focus();
-      }
-
-      // Назначение обработчиков кнопок
-      document.getElementById('addLanguage').addEventListener('click', addLanguage);
-      document.getElementById('addSkill').addEventListener('click', addSkill);
-      document.getElementById('addHobby').addEventListener('click', addHobby);
-      document.getElementById('addContact').addEventListener('click', addContact);
-      document.getElementById('addEducation').addEventListener('click', addEducation);
-      document.getElementById('addExperience').addEventListener('click', addExperience);
-
       // Обработка кнопки сохранения в PDF
       document.getElementById('downloadBtn').addEventListener('click', function() {
         const element = document.getElementById('resumeContent');
         const opt = {
           margin: 10,
-          filename: 'Мое_резюме.pdf',
-          image: { 
-            type: 'jpeg', 
-            quality: 1.0
-          },
-          html2canvas: { 
-            scale: 3,
-            logging: false,
-            useCORS: true,
-            letterRendering: true,
-            dpi: 300
-          },
-          jsPDF: { 
-            unit: 'mm', 
-            format: 'a4', 
-            orientation: 'portrait' 
-          }
+          filename: 'Резюме.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // Скрываем кнопки перед генерацией PDF
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(btn => {
-          btn.style.visibility = 'hidden';
-        });
-
+        // Скрываем кнопку перед генерацией PDF
+        this.style.visibility = 'hidden';
+        
         // Генерируем PDF
         html2pdf().set(opt).from(element).save().then(() => {
-          // Восстанавливаем кнопки после генерации
-          buttons.forEach(btn => {
-            btn.style.visibility = 'visible';
-          });
+          // Восстанавливаем кнопку после генерации
+          this.style.visibility = 'visible';
         });
       });
-
-      // Инициализация эффектов волны
-      setupWaveEffects();
     });
   </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 </html>
